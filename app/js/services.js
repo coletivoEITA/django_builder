@@ -140,6 +140,8 @@ function ModelRenderFactory() {
             urls_py += 'from . import api'+_this.new_lines(1);
             urls_py += 'from . import views'+_this.new_lines(2);
 
+            urls_py +='app_name = \''+app_name+'\''+_this.new_lines(1);
+
             urls_py +='router = routers.DefaultRouter()'+_this.new_lines(1);
             jQuery.each(models, function(i, model){
                 urls_py +='router.register(r\''+model.l_name()+'\', api.'+model.name+'ViewSet)'+_this.new_lines(1);
@@ -684,16 +686,16 @@ function ModelServiceFactory() {
             };
             this.name_field = function () {
                 // TODO - find another auto_add_now_field
-                if(this.field_names().indexOf('name')!=-1){
-                    return 'name';
+                if(this.field_names().indexOf('nome')!=-1){
+                    return 'nome';
                 }else{
                     return 'pk';
                 }
             };
             this.ordering_field = function () {
                 // TODO - find another auto_add_now_field
-                if(this.field_names().indexOf('created')!=-1){
-                    return 'created';
+                if(this.field_names().indexOf('criacao')!=-1){
+                    return 'criacao';
                 }else{
                     return 'pk';
                 }
@@ -776,13 +778,13 @@ function ModelServiceFactory() {
                 tests += renderer.new_lines(1);
 
                 tests += renderer.spaces(4)+'def test_list_'+this.l_name()+'(self):\n';
-                tests += renderer.spaces(8)+'url = reverse(\''+app_name+'_'+this.l_name()+'_list\')\n';
+                tests += renderer.spaces(8)+'url = reverse(\''+app_name+':'+this.l_name()+'_list\')\n';
                 tests += renderer.spaces(8)+'response = self.client.get(url)\n';
                 tests += renderer.spaces(8)+'self.assertEqual(response.status_code, 200)\n';
                 tests += renderer.new_lines(1);
 
                 tests += renderer.spaces(4)+'def test_create_'+this.l_name()+'(self):\n';
-                tests += renderer.spaces(8)+'url = reverse(\''+app_name+'_'+this.l_name()+'_create\')\n';
+                tests += renderer.spaces(8)+'url = reverse(\''+app_name+':'+this.l_name()+'_create\')\n';
                 tests += renderer.spaces(8)+'data = '+this.get_initial_data(app_name, renderer)+'\n';
                 tests += renderer.spaces(8)+'response = self.client.post(url, data=data)\n';
                 tests += renderer.spaces(8)+'self.assertEqual(response.status_code, 302)\n';
@@ -790,7 +792,7 @@ function ModelServiceFactory() {
 
                 tests += renderer.spaces(4)+'def test_detail_'+this.l_name()+'(self):\n';
                 tests += renderer.spaces(8)+this.l_name()+' = create_'+this.l_name()+'()\n';
-                tests += renderer.spaces(8)+'url = reverse(\''+app_name+'_'+this.l_name()+'_detail\', args=['+this.l_name()+'.'+this.identifier()+',])\n';
+                tests += renderer.spaces(8)+'url = reverse(\''+app_name+':'+this.l_name()+'_detail\', args=['+this.l_name()+'.'+this.identifier()+',])\n';
                 tests += renderer.spaces(8)+'response = self.client.get(url)\n';
                 tests += renderer.spaces(8)+'self.assertEqual(response.status_code, 200)\n';
                 tests += renderer.new_lines(1);
@@ -798,7 +800,7 @@ function ModelServiceFactory() {
                 tests += renderer.spaces(4)+'def test_update_'+this.l_name()+'(self):\n';
                 tests += renderer.spaces(8)+this.l_name()+' = create_'+this.l_name()+'()\n';
                 tests += renderer.spaces(8)+'data = '+this.get_initial_data(app_name, renderer)+'\n';
-                tests += renderer.spaces(8)+'url = reverse(\''+app_name+'_'+this.l_name()+'_update\', args=['+this.l_name()+'.'+this.identifier()+',])\n';
+                tests += renderer.spaces(8)+'url = reverse(\''+app_name+':'+this.l_name()+'_update\', args=['+this.l_name()+'.'+this.identifier()+',])\n';
                 tests += renderer.spaces(8)+'response = self.client.post(url, data)\n';
                 tests += renderer.spaces(8)+'self.assertEqual(response.status_code, 302)\n';
                 tests += renderer.new_lines(2);
@@ -813,16 +815,16 @@ function ModelServiceFactory() {
                 urls += renderer.spaces(4)+'# urls for '+this.name+'\n';
 
                 if(django2){
-                  var prefix = renderer.spaces(4)+path_import+'(\''+app_name+'/'+this.l_name();
+                  var prefix = renderer.spaces(4)+path_import+'(\''+this.l_name();
                   if(this.identifier_is_slug()){
                     var url_identifier = '<slug:'+this.identifier()+'>'
                   }else{
                     var url_identifier = '<int:'+this.identifier()+'>'
                   }
-                  urls += prefix+'/\', views.'+this.name+'ListView.as_view(), name=\''+app_name+'_'+this.l_name()+'_list\'),\n';
-                  urls += prefix+'/create/\', views.'+this.name+'CreateView.as_view(), name=\''+app_name+'_'+this.l_name()+'_create\'),\n';
-                  urls += prefix+'/detail/'+url_identifier+'/\', views.'+this.name+'DetailView.as_view(), name=\''+app_name+'_'+this.l_name()+'_detail\'),\n';
-                  urls += prefix+'/update/'+url_identifier+'/\', views.'+this.name+'UpdateView.as_view(), name=\''+app_name+'_'+this.l_name()+'_update\'),\n';
+                  urls += prefix+'/\', views.'+this.name+'ListView.as_view(), name=\''+this.l_name()+'_list\'),\n';
+                  urls += prefix+'/create/\', views.'+this.name+'CreateView.as_view(), name=\''+this.l_name()+'_create\'),\n';
+                  urls += prefix+'/detail/'+url_identifier+'/\', views.'+this.name+'DetailView.as_view(), name=\''+this.l_name()+'_detail\'),\n';
+                  urls += prefix+'/update/'+url_identifier+'/\', views.'+this.name+'UpdateView.as_view(), name=\''+this.l_name()+'_update\'),\n';
                 }else{
                   var prefix = renderer.spaces(4)+path_import+'(r\'^'+app_name+'/'+this.l_name();
                   urls += prefix+'/$\', views.'+this.name+'ListView.as_view(), name=\''+app_name+'_'+this.l_name()+'_list\'),\n';
@@ -988,13 +990,13 @@ function ModelServiceFactory() {
                 cls += renderer.new_lines(2);
                 cls += renderer.spaces(4)+'def get_absolute_url(self):';
                 cls += renderer.new_lines(1);
-                cls += renderer.spaces(8)+'return reverse(\''+app_name+'_'+this.l_name()+'_detail\', args=(self.'+this.identifier()+',))';
+                cls += renderer.spaces(8)+'return reverse(\''+app_name+':'+this.l_name()+'_detail\', args=(self.'+this.identifier()+',))';
                 cls += renderer.new_lines(1);
 
                 cls += renderer.new_lines(2);
                 cls += renderer.spaces(4)+'def get_update_url(self):';
                 cls += renderer.new_lines(1);
-                cls += renderer.spaces(8)+'return reverse(\''+app_name+'_'+this.l_name()+'_update\', args=(self.'+this.identifier()+',))';
+                cls += renderer.spaces(8)+'return reverse(\''+app_name+':'+this.l_name()+'_update\', args=(self.'+this.identifier()+',))';
                 cls += renderer.new_lines(3);
 
                 return cls;
@@ -1035,8 +1037,8 @@ function ModelServiceFactory() {
                 return '{% extends "base.html" %}\n{% load static %}\n';
             };
             this._template_links = function(app_name){
-                var list_url = app_name+'_'+this.l_name()+'_list';
-                return '<p><a class="btn btn-default" href="{% url \''+list_url+'\' %}">'+this.name+' Listing<\/a><\/p>\n';
+                var list_url = app_name+':'+this.l_name()+'_list';
+                return '<p><a class="btn btn-default" href="{% url \''+list_url+'\' %}">Lista de '+this.name+'s<\/a><\/p>\n';
             };
             this._wrap_block = function(block, content){
                 return '{% block '+block+' %}\n'+content+'\n{% endblock %}'
@@ -1044,17 +1046,18 @@ function ModelServiceFactory() {
             this.render_form_html = function(app_name){
                 var form_html = this._template_header();
                 form_html += "{% load crispy_forms_tags %}\n";
-                var form = this._template_links(app_name) + '<form method="post">\n';
-                form += '{% csrf_token %}\n{{form|crispy}}\n';
-                form += '<button class="btn btn-primary" type="submit">Submit</button>\n';
-                form += '</form>';
+                var form = this._template_links(app_name);
+                form += '{% crispy form %}\n';
                 form_html += this._wrap_block('content', form);
                 return form_html;
             };
             this.render_list_html = function(app_name){
-                var create_url = app_name+'_'+this.l_name()+'_create';
+                var create_url = app_name+':'+this.l_name()+'_create';
                 var list_html = this._template_header();
-                var table_html = this._template_links(app_name) +'<table class="table">\n';
+                var table_html = '{% if object_list|length > 0 %}\n';
+                table_html += '<div class="row">\n<div class="col-sm-12">\n';
+                table_html += '<h1>'+this.name+'s</h1>\n';
+                table_html += '<table class="table">\n';
                 table_html += '<tr>\n';
                 table_html += '<td>ID<\/td><td>Link<\/td>\n';
                 jQuery.each(this.fields, function(i, field){
@@ -1071,7 +1074,15 @@ function ModelServiceFactory() {
                 table_html += '<\/tr>\n';
                 table_html += '{% endfor %}\n';
                 table_html += '<\/table>';
-                table_html += '<a class="btn btn-primary" href="{% url \''+create_url+'\' %}">Create new '+this.name+'<\/a>';
+                table_html += '<a class="btn btn-primary" href="{% url \''+create_url+'\' %}">Cadastrar '+this.name+'<\/a>';
+                table_html += '</div>\n</div>\n';
+				table_html += '{% else %}\n';
+				table_html += '<div class="text-center mt-5 mb-5 jumbotron">\n';
+				table_html += '<h5>Não há <code>'+this.name+'</code>\n';
+				table_html += '<button class="btn btn-info" onclick="location.href=\'{% url \''+create_url+'\' %}\'">Cadastrar '+this.name+'</button>\n';
+				table_html += '</h5>\n';
+				table_html += '</div>\n';
+				table_html += '{% endif %}\n';
                 list_html += this._wrap_block('content', table_html);
                 return list_html;
             };
@@ -1082,7 +1093,7 @@ function ModelServiceFactory() {
                     table_html += '<tr><td>'+field.name+'<\/td><td>{{ object.'+field.name+' }}<\/td><\/tr>\n';
                 });
                 table_html += '</table>';
-                table_html += '\n<a class="btn btn-primary" href="{{object.get_update_url}}">Edit ' + this.name + '</a>\n';
+                table_html += '\n<a class="btn btn-primary" href="{{object.get_update_url}}">Editar ' + this.name + '</a>\n';
                 detail_html += this._wrap_block('content', table_html);
                 return detail_html;
             };

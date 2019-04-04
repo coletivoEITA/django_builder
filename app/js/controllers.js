@@ -538,7 +538,7 @@ angular.module('builder.controllers', ['LocalStorageModule'])
                 var model_opts = {"name": model_name};
                 model_opts.fields = [
                     $scope.field_factory.make_field({
-                        'name': 'name',
+                        'name': 'nome',
                         'type': 'django.db.models.CharField',
                         'opts': 'max_length=255'
                     }),
@@ -548,12 +548,12 @@ angular.module('builder.controllers', ['LocalStorageModule'])
                         'opts': 'populate_from=\'name\', blank=True'
                     }),
                     $scope.field_factory.make_field({
-                        'name': 'created',
+                        'name': 'criacao',
                         'type': 'django.db.models.DateTimeField',
                         'opts': 'auto_now_add=True, editable=False'
                     }),
                     $scope.field_factory.make_field({
-                        'name': 'last_updated',
+                        'name': 'ultima_alteracao',
                         'type': 'django.db.models.DateTimeField',
                         'opts': 'auto_now=True, editable=False'
                     })
