@@ -175,7 +175,7 @@ function ModelRenderFactory() {
             return views_py;
         };
         _this.render_views_py = function (app_name, models) {
-            var views_py =  'from django.views.generic import DetailView, ListView, UpdateView, CreateView\n';
+            var views_py =  'from django.views.generic import DetailView, ListView, UpdateView, CreateView, DeleteView\n';
             views_py += 'from .models import '+_this.model_names(models).join(', ');
             views_py += _this.new_lines(1);
             views_py += 'from .forms import '+_this.model_names(models, 'Form').join(', ');
@@ -825,12 +825,14 @@ function ModelServiceFactory() {
                   urls += prefix+'/create/\', views.'+this.name+'CreateView.as_view(), name=\''+this.l_name()+'_create\'),\n';
                   urls += prefix+'/detail/'+url_identifier+'/\', views.'+this.name+'DetailView.as_view(), name=\''+this.l_name()+'_detail\'),\n';
                   urls += prefix+'/update/'+url_identifier+'/\', views.'+this.name+'UpdateView.as_view(), name=\''+this.l_name()+'_update\'),\n';
+                  urls += prefix+'/delete/'+url_identifier+'/\', views.'+this.name+'DeleteView.as_view(), name=\''+this.l_name()+'_delete\'),\n';
                 }else{
                   var prefix = renderer.spaces(4)+path_import+'(r\'^'+app_name+'/'+this.l_name();
                   urls += prefix+'/$\', views.'+this.name+'ListView.as_view(), name=\''+app_name+'_'+this.l_name()+'_list\'),\n';
                   urls += prefix+'/create/$\', views.'+this.name+'CreateView.as_view(), name=\''+app_name+'_'+this.l_name()+'_create\'),\n';
                   urls += prefix+'/detail/(?P<'+this.identifier()+'>\\S+)/$\', views.'+this.name+'DetailView.as_view(), name=\''+app_name+'_'+this.l_name()+'_detail\'),\n';
                   urls += prefix+'/update/(?P<'+this.identifier()+'>\\S+)/$\', views.'+this.name+'UpdateView.as_view(), name=\''+app_name+'_'+this.l_name()+'_update\'),\n';
+                  urls += prefix+'/delete/(?P<'+this.identifier()+'>\\S+)/$\', views.'+this.name+'DeleteView.as_view(), name=\''+app_name+'_'+this.l_name()+'_delete\'),\n';
                 }
 
                 urls += ')\n';
@@ -880,6 +882,10 @@ function ModelServiceFactory() {
                 view_classes += 'class '+this.name+'UpdateView(UpdateView):\n';
                 view_classes += renderer.spaces(4)+'model = '+this.name+'\n';
                 view_classes += renderer.spaces(4)+'form_class = '+this.name+'Form';
+                view_classes += renderer.new_lines(2);
+
+                view_classes += 'class '+this.name+'DeleteView(DeleteView):\n';
+                view_classes += renderer.spaces(4)+'model = '+this.name+'\n';
                 view_classes += renderer.new_lines(2);
 
                 return view_classes;
